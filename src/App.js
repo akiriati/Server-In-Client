@@ -1,26 +1,55 @@
 import React from 'react';
-import logo from './logo.svg';
+import Watermark from './watermark';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+  
+  constructor(props){
+    super(props)
+    this.state = {
+      watermark: null
+    }
+
+  }
+
+  handleWatermarkChanged = (event) => {
+    //const formData = new FormData()
+    //formData.append('watermark',event.target.files[0]);
+    fetch("http://localhost:3000/files/watermark.png", {
+      method: 'POST',
+      body: event.target.files[0], 
+      headers: {
+        'content-type': 'image/png'
+      }   
+    }).then(
+      this.setState({
+        watermark: window.URL.createObjectURL(event.target.files[0])
+      })
+    )
+  }
+
+  componentDidMount = () => {
+    fetch("http://localhost:3000/files/watermark.png")
+    .then(response => response.blob())
+    .then(blob =>  
+      this.setState({
+        watermark: window.URL.createObjectURL(new File([blob], "name"))
+      }))
+    }
+
+
+  render() {
+    return (
+      <div>
+        <Watermark 
+        {...this.state} 
+        handleWatermarkChanged={this.handleWatermarkChanged}
+        ></Watermark>
+      </div>
+    );
+  }
 }
+
+
 
 export default App;
