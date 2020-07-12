@@ -43,7 +43,10 @@ class App extends React.Component {
       }).then(response => {
         fetch("/addNewPicId", {
           method: 'POST',
-          body: { picId: picId },
+          body: JSON.stringify({ picId: picId }),
+          headers: {
+            'Content-Type': 'application/json'
+          },
         })
       })
     }

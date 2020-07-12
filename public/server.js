@@ -80,7 +80,7 @@ class Router {
   execute = (method, route, req, res) => {
     for (let handler of this.handlers) {
       if (handler.method == method && route.match(handler.route)) {
-        handler.fn(req, res)
+        return handler.fn(req, res)
       }
     }
   }
@@ -138,7 +138,7 @@ app.post("/files/*", (req, res) => {
           const store = tx.objectStore("files");
           let request = store.put(data, path);
           request.onsuccess = successEvent => {
-            resolve(new Response({path: path}));
+            resolve(new Response({ path: path }));
           }
         })
     })
@@ -147,16 +147,28 @@ app.post("/files/*", (req, res) => {
 
 app.post("/addNewPicId", (req, res) => {
   let path = getDBPathFromUrl(req.url);
-  let picId = req.body.picId
-  let transaction = db.transaction(["data"], "readwrite");
-  let store = transaction.objectStore("data");
-  let request = store.get("/withoutWatermark");
-  request.onsuccess = successEvent => {
-    store.put(request.result.push(picId), path);
-  }
-  request.onerror = ErrorEvent => {
-    store.put([picId], path)
-  }
+  res.send(
+    new Promise((resolve, reject) => {
+      req.json().then(function (json) {
+        let pathWithoutWatermark = "/withoutWatermark"
+        let transaction = db.transaction(["data"], "readwrite");
+        let store = transaction.objectStore("data");
+        let request = store.get(pathWithoutWatermark);
+        request.onsuccess = successEvent => {
+          let ids = [];
+          if (request.result) {
+            ids = request.result;
+          }
+          ids.push(json.picId)
+          store.put(ids, pathWithoutWatermark);
+        }
+        request.onerror = ErrorEvent => {
+          store.put([json.picId], pathWithoutWatermark)
+        }
+        resolve(new Response({ path: pathWithoutWatermark }));
+      })
+    })
+  );
 });
 
 
@@ -176,5 +188,5 @@ class ResponseWrapper {
  */
 
 addEventListener('fetch', function (event) {
-  return app.execute(event.request.method, getPathFromUrl(event.request.url), event.request, new ResponseWrapper(event));
+  return app.execute(event.request.method, getPathFromUrl(event.request.url), event.request.clone(), new ResponseWrapper(event));
 });
