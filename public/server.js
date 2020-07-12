@@ -115,27 +115,27 @@ app.get("/files/*", (req, res) => {
 app.post("/files/*", (req, res) => {
   let path = getDBPathFromUrl(req.url);
   res.send(
-    req.blob().then(
-      data => {
-        const tx = db.transaction("files", "readwrite");
-        const store = tx.objectStore("files");
-        let request = store.put(data, path);
-        request.onsuccess = successEvent => {
-          return { "file": path };
-        }
-
-      }
-    )
+    new Promise((resolve, reject) => {
+      req.blob().then(
+        data => {
+          const tx = db.transaction("files", "readwrite");
+          const store = tx.objectStore("files");
+          let request = store.put(data, path);
+          request.onsuccess = successEvent => {
+            resolve(new Response(request.result, { 'content-type': 'image/png' }));
+          }
+        })
+    })
   );
 });
 
 
 class ResponseWrapper {
-  constructor (event) {
+  constructor(event) {
     this.event = event
   }
 
-  send (payload) {
+  send(payload) {
     this.event.respondWith(payload)
   }
 }
