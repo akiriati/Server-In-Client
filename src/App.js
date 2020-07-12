@@ -14,11 +14,11 @@ class App extends React.Component {
       withWatermark: [],
       inProgress:[],      
     }
-
+    let timer = null;
   }
 
   handleWatermarkChanged = (event) => {
-    fetch("http://localhost:3000/files/watermark.png", {
+    fetch("/files/watermark.png", {
       method: 'POST',
       body: event.target.files[0],
       headers: {
@@ -34,14 +34,14 @@ class App extends React.Component {
   handleUploadNonWatermarkedPictures = (event) => {
     for (let file in Array.from(event.target.files)) {
       let picId = this.uuidv4()
-      fetch("http://localhost:3000/files/" + picId + ".png", {
+      fetch("/files/" + picId + ".png", {
         method: 'POST',
         body: file,
         headers: {
           'content-type': 'image/png'
         }
       }).then(response => {
-        fetch("http://localhost:3000/addNewPicId", {
+        fetch("/addNewPicId", {
           method: 'POST',
           body: { picId: picId },
         }).then(response => {
@@ -62,16 +62,26 @@ class App extends React.Component {
   }
 
 
-
-  
     componentDidMount = () => {
-      fetch("http://localhost:3000/files/watermark.png")
+      fetch("files/watermark.png")
         .then(response => response.blob())
         .then(blob =>
           this.setState({
             watermark: window.URL.createObjectURL(new File([blob], "name"))
           })
       )
+      // this.activateFetchFromServer()
+    }
+
+    activateFetchFromServer = () => (
+      this.timer = setTimeout(() => {
+        this.fetchFromServer()
+        this.activateFetchFromServer()
+      }, 1000)
+    )
+    
+    fillMockedData = ()=> {
+
     }
 
     fetchFromServer = () => {
