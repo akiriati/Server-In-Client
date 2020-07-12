@@ -90,7 +90,7 @@ app.get("/files/*", (req, res) => {
   let path = getPathFromUrl(req.url);
   let table = getTableFromUrl(req.url);
   res(
-    readtheDatafromIndexedDb(db, table, getPathFromUrl(event.request.url), { 'content-type': 'image/png' }).then(response => { return response; })
+    readtheDatafromIndexedDb(db, table, path, { 'content-type': 'image/png' }).then(response => { return response; })
   )
 });
 
