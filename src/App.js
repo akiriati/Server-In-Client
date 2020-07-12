@@ -32,7 +32,7 @@ class App extends React.Component {
   }
 
   handleUploadNonWatermarkedPictures = (event) => {
-    for (let file in event.target.files) {
+    for (let file in Array.from(event.target.files)) {
       let picId = this.uuidv4()
       fetch("http://localhost:3000/files/" + picId + ".png", {
         method: 'POST',
@@ -44,10 +44,11 @@ class App extends React.Component {
         fetch("http://localhost:3000/addNewPicId", {
           method: 'POST',
           body: { picId: picId },
-        }).then(response =>
-          this.setState({
+        }).then(response => {
+          return this.setState({
             withoutWatermark: [...this.state.withoutWatermark, picId]
           })
+        }
         )
       })
     }
