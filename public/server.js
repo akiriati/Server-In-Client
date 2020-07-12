@@ -1,31 +1,136 @@
+/*****************
+ * DB
+ */
+
 const request = indexedDB.open("myApp", 2);
 let db;
 
-request.onupgradeneeded = function() {
+request.onupgradeneeded = function () {
   // The database did not previously exist, so create object stores and indexes.
   const db = request.result;
   db.createObjectStore("files");
   db.createObjectStore("data");
 };
 
-request.onsuccess = function() {
+request.onsuccess = function () {
   db = request.result;
 };
 
 request.onerror = event => {
-    console.log(event.error)
-  };
-  
-addEventListener('fetch', function(event) {
-  
-  const method = event.request.method;
-  let parts = new URL(event.request.url).pathname.split("/");
+  console.log(event.error)
+};
+
+
+/*****************
+ * Router
+ */
+
+class Router {
+
+  constructor() {
+    this.handlers = [];
+  }
+
+  addHandler(method, route, fn) {
+    this.handlers.push(
+      {
+        method: method,
+        route: route,
+        fn: fn
+      }
+    )
+  }
+
+  get = (route, fn) => {
+    this.addHandler(
+      "GET",
+      route,
+      fn
+    )
+  }
+
+  post = (route, fn) => {
+    this.addHandler(
+      "POST",
+      route,
+      fn
+    )
+  }
+
+  execute = (method, route, req, res) => {
+    for (let handler of this.handlers) {
+      if (handler.method == method && route.match(handler.route)) {
+        handler.fn(req, res)
+      }
+    }
+  }
+}
+
+
+
+getPathFromUrl = (url) => {
+  let parts = new URL(url).pathname.split("/");
+  parts.shift();
+  return "/" + parts.join("/");
+}
+
+getTableFromUrl = (url) => {
+  let parts = new URL(url).pathname.split("/");
+  parts.shift();
+  return parts.shift();
+}
+
+
+/*****************
+ * App
+ */
+app = new Router()
+
+app.get("/files/*", (req, res) => {
+  let path = getPathFromUrl(req.url);
+  let table = getTableFromUrl(req.url);
+  res(
+    readtheDatafromIndexedDb(db, table, getPathFromUrl(event.request.url), { 'content-type': 'image/png' }).then(response => { return response; })
+  )
+});
+
+app.post("/files/*", (req, res) => {
+  let path = getPathFromUrl(req.url);
+  let table = getTableFromUrl(req.url);
+  req.formData().then(data => { console.log(data) })
+  res(
+    event.request.blob().then(
+      data => {
+        const tx = db.transaction(table, "readwrite");
+        const store = tx.objectStore(table);
+        let request = store.put(data, path);
+        request.onsuccess = successEvent => {
+          return { "file": path };
+        }
+
+      }
+    )
+  );
+});
+
+
+/*****************
+ * Event listener
+ */
+
+addEventListener('fetch', function (event) {
+
+
+  app.execute(event.request.method, getPathFromUrl(event.request.url), event.request, event.respondWith);
+
+
+
+  /*let parts = new URL(event.request.url).pathname.split("/");
   parts.shift();
   const table = parts.shift();
-  const path = parts.join("/");
+  const path = parts.join("/");*/
 
-
-  switch(method) {
+  /*switch(method) {
       case "GET":
           if (table == "files" || table == "data") {
             headers = (table == "files")? { 'content-type':'image/png' } : {}
@@ -87,8 +192,8 @@ addEventListener('fetch', function(event) {
         }
 
 
-  }
-  
+  }*/
+
 });
 
 function readtheDatafromIndexedDb(dbName, storeName, key, headers) {
@@ -97,11 +202,14 @@ function readtheDatafromIndexedDb(dbName, storeName, key, headers) {
     var store = transaction.objectStore(storeName);
     var request = store.get(key);
     request.onerror = function () {
-        reject("unexpected error happened");
+      reject("unexpected error happened");
     }
     request.onsuccess = function (e) {
-        //JSON.parse(request.result)
-        resolve(new Response( request.result, { headers: headers } ));
+      //JSON.parse(request.result)
+      resolve(new Response(request.result, { headers: headers }));
     }
   })
 }
+
+
+
