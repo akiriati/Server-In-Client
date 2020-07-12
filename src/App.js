@@ -32,7 +32,7 @@ class App extends React.Component {
   }
 
   handleUploadNonWatermarkedPictures = (event) => {
-    for (let file in Array.from(event.target.files)) {
+    for (let file of Array.from(event.target.files)) {
       let picId = this.uuidv4()
       fetch("/files/" + picId + ".png", {
         method: 'POST',
