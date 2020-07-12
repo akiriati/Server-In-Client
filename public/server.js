@@ -97,10 +97,11 @@ app.get("/files/*", (req, res) => {
 app.post("/files/*", (req, res) => {
   let path = getPathFromUrl(req.url);
   let table = getTableFromUrl(req.url);
-  req.formData().then(data => { console.log(data) })
+  // req.formData().then(data => { console.log(data) })
   res(
-    event.request.blob().then(
+    req.blob().then(
       data => {
+        console.log("saving to path ", path)
         const tx = db.transaction(table, "readwrite");
         const store = tx.objectStore(table);
         let request = store.put(data, path);

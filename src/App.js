@@ -65,10 +65,11 @@ class App extends React.Component {
     componentDidMount = () => {
       fetch("files/watermark.png")
         .then(response => response.blob())
-        .then(blob =>
-          this.setState({
+        .then(blob =>{
+          return this.setState({
             watermark: window.URL.createObjectURL(new File([blob], "name"))
           })
+        }
       )
       // this.activateFetchFromServer()
     }
