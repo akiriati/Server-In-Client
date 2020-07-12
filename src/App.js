@@ -10,8 +10,9 @@ class App extends React.Component {
     super(props)
     this.state = {
       watermark: null,
-      nonWatermarkedIds: [],
-      watermarkedIds: []
+      withoutWatermark: [],
+      withWatermark: [],
+      inProgress:[],      
     }
 
   }
@@ -45,7 +46,7 @@ class App extends React.Component {
           body: { picId: picId },
         }).then(response =>
           this.setState({
-            nonWatermarkedIds: [...this.state.nonWatermarkedIds, picId]
+            withoutWatermark: [...this.state.withoutWatermark, picId]
           })
         )
       })
@@ -61,16 +62,32 @@ class App extends React.Component {
 
 
 
-
+  
     componentDidMount = () => {
       fetch("http://localhost:3000/files/watermark.png")
         .then(response => response.blob())
         .then(blob =>
           this.setState({
             watermark: window.URL.createObjectURL(new File([blob], "name"))
-          }))
+          })
+      )
     }
 
+    fetchFromServer = () => {
+      fetch("/data/with_watermark").then(
+        response => response.json()
+      ).then(withWatermark =>  this.setState({
+        withWatermark:withWatermark
+      })
+      )
+      fetch("/data/without_watermark").then(response => response.json()).then(withoutWatermark =>
+        this.setState({withoutWatermark:withoutWatermark})
+      )
+
+      fetch("/data/in_progress").then(response => response.json()).then(inProgress =>
+        this.setState({inProgress:inProgress})
+      )
+    }
 
     render() {
       return (
