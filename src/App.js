@@ -2,6 +2,7 @@ import React from 'react';
 import Watermark from './watermark';
 import NonWatermarkedSection from './nonWatermarkedSection';
 import './App.css';
+import ImagesUpload from './images_upload';
 
 class App extends React.Component {
 
@@ -9,8 +10,9 @@ class App extends React.Component {
     super(props)
     this.state = {
       watermark: null,
-      nonWatermarkedIds: [],
-      watermarkedIds: []
+      withoutWatermark: [],
+      withWatermark: [],
+      inProgress:[],      
     }
 
   }
@@ -30,7 +32,7 @@ class App extends React.Component {
   }
 
   handleUploadNonWatermarkedPictures = (event) => {
-    for (let file in event.target.files) {
+    for (let file in Array.from(event.target.files)) {
       let picId = this.uuidv4()
       fetch("http://localhost:3000/files/" + picId + ".png", {
         method: 'POST',
@@ -42,10 +44,11 @@ class App extends React.Component {
         fetch("http://localhost:3000/addNewPicId", {
           method: 'POST',
           body: { picId: picId },
-        }).then(response =>
-          this.setState({
-            nonWatermarkedIds: this.state.nonWatermarkedIds.append(picId)
+        }).then(response => {
+          return this.setState({
+            withoutWatermark: [...this.state.withoutWatermark, picId]
           })
+        }
         )
       })
     }
@@ -60,16 +63,32 @@ class App extends React.Component {
 
 
 
-
+  
     componentDidMount = () => {
       fetch("http://localhost:3000/files/watermark.png")
         .then(response => response.blob())
         .then(blob =>
           this.setState({
             watermark: window.URL.createObjectURL(new File([blob], "name"))
-          }))
+          })
+      )
     }
 
+    fetchFromServer = () => {
+      fetch("/data/with_watermark").then(
+        response => response.json()
+      ).then(withWatermark =>  this.setState({
+        withWatermark:withWatermark
+      })
+      )
+      fetch("/data/without_watermark").then(response => response.json()).then(withoutWatermark =>
+        this.setState({withoutWatermark:withoutWatermark})
+      )
+
+      fetch("/data/in_progress").then(response => response.json()).then(inProgress =>
+        this.setState({inProgress:inProgress})
+      )
+    }
 
     render() {
       return (
@@ -78,6 +97,8 @@ class App extends React.Component {
             {...this.state}
             handleWatermarkChanged={this.handleWatermarkChanged}
           ></Watermark>
+          <ImagesUpload {...this.state} handleUploadNonWatermarkedPictures={this.handleUploadNonWatermarkedPictures}>
+          </ImagesUpload>
           <NonWatermarkedSection
             {...this.state}
           >

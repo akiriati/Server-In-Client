@@ -11,7 +11,7 @@ class NonWatermarkedSection extends React.Component {
     return (
       <div>
         {
-          this.props.nonWatermarkedIds.map((picId) => {
+          this.props.withoutWatermark.map((picId) => {
             return <Picture
               {...this.props}
               source={"http://localhost:3000/files/" + picId}
