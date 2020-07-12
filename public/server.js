@@ -66,20 +66,18 @@ class Router {
   }
 }
 
-
-
 getPathFromUrl = (url) => {
   let parts = new URL(url).pathname.split("/");
   parts.shift();
   return "/" + parts.join("/");
 }
 
-getTableFromUrl = (url) => {
+getDBPathFromUrl = (url) => {
   let parts = new URL(url).pathname.split("/");
   parts.shift();
-  return parts.shift();
+  parts.shift();
+  return "/" + parts.join("/");
 }
-
 
 /*****************
  * App
@@ -87,23 +85,25 @@ getTableFromUrl = (url) => {
 app = new Router()
 
 app.get("/files/*", (req, res) => {
-  let path = getPathFromUrl(req.url);
-  let table = getTableFromUrl(req.url);
-  res(
-    readtheDatafromIndexedDb(db, table, path, { 'content-type': 'image/png' }).then(response => { return response; })
+  let path = getDBPathFromUrl(req.url);
+  res.respondWith(
+    readtheDatafromIndexedDb(
+      db,
+      "files",
+      path,
+      { 'content-type': 'image/png' }
+    )
+      .then(response => { return response; })
   )
 });
 
 app.post("/files/*", (req, res) => {
-  let path = getPathFromUrl(req.url);
-  let table = getTableFromUrl(req.url);
-  // req.formData().then(data => { console.log(data) })
-  res(
+  let path = getDBPathFromUrl(req.url);
+  res.respondWith(
     req.blob().then(
       data => {
-        console.log("saving to path ", path)
-        const tx = db.transaction(table, "readwrite");
-        const store = tx.objectStore(table);
+        const tx = db.transaction("files", "readwrite");
+        const store = tx.objectStore("files");
         let request = store.put(data, path);
         request.onsuccess = successEvent => {
           return { "file": path };
@@ -122,7 +122,7 @@ app.post("/files/*", (req, res) => {
 addEventListener('fetch', function (event) {
 
 
-  app.execute(event.request.method, getPathFromUrl(event.request.url), event.request, event.respondWith);
+  return app.execute(event.request.method, getPathFromUrl(event.request.url), event.request, event);
 
 
 
