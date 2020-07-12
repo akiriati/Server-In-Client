@@ -2,6 +2,7 @@ import React from 'react';
 import Watermark from './watermark';
 import NonWatermarkedSection from './nonWatermarkedSection';
 import './App.css';
+import ImagesUpload from './images_upload';
 
 class App extends React.Component {
 
@@ -44,7 +45,7 @@ class App extends React.Component {
           body: { picId: picId },
         }).then(response =>
           this.setState({
-            nonWatermarkedIds: this.state.nonWatermarkedIds.append(picId)
+            nonWatermarkedIds: [...this.state.nonWatermarkedIds, picId]
           })
         )
       })
@@ -78,6 +79,8 @@ class App extends React.Component {
             {...this.state}
             handleWatermarkChanged={this.handleWatermarkChanged}
           ></Watermark>
+          <ImagesUpload {...this.state} handleUploadNonWatermarkedPictures={this.handleUploadNonWatermarkedPictures}>
+          </ImagesUpload>
           <NonWatermarkedSection
             {...this.state}
           >
