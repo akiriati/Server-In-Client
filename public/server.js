@@ -2,14 +2,16 @@
  * DB
  */
 
-const request = indexedDB.open("myApp", 2);
+const request = indexedDB.open("myApp", 3);
 let db;
 
 request.onupgradeneeded = function () {
   // The database did not previously exist, so create object stores and indexes.
   const db = request.result;
-  db.createObjectStore("files");
-  db.createObjectStore("data");
+  let filesStore = db.createObjectStore("files");
+  let dataStore = db.createObjectStore("data");
+
+  filesStore.createIndex("path", "");
 };
 
 request.onsuccess = function () {
@@ -145,7 +147,22 @@ app.post("/files/*", (req, res) => {
   );
 });
 
-app.post("/addNewPicId", (req, res) => {
+app.post("/list", (req, res) => {
+  let path = getDBPathFromUrl(req.url);
+  res.send(
+    new Promise((resolve, reject) => {
+      const tx = db.transaction("files", "readwrite");
+      const store = tx.objectStore("files");
+      var myIndex = store.index('path');
+      var request = myIndex.getAllKeys();
+      request.onsuccess = successEvent => {
+        resolve(new Response({ path: request.result }));
+      }
+    })
+  );
+});
+
+/*app.post("/addNewPicId", (req, res) => {
   let path = getDBPathFromUrl(req.url);
   res.send(
     new Promise((resolve, reject) => {
@@ -169,7 +186,7 @@ app.post("/addNewPicId", (req, res) => {
       })
     })
   );
-});
+});*/
 
 
 
@@ -182,7 +199,6 @@ class ResponseWrapper {
     this.event.respondWith(payload)
   }
 }
-
 /*****************
  * Event listener
  */
