@@ -44,12 +44,7 @@ class App extends React.Component {
         fetch("/addNewPicId", {
           method: 'POST',
           body: { picId: picId },
-        }).then(response => {
-          return this.setState({
-            withoutWatermark: [...this.state.withoutWatermark, picId]
-          })
-        }
-        )
+        })
       })
     }
   }

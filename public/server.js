@@ -20,7 +20,7 @@ request.onerror = event => {
   console.log(event.error)
 };
 
-function readtheDatafromIndexedDb(dbName, storeName, key, headers) {
+function readtheDatafromIndexedDb(dbName, storeName, key) {
   return new Promise((resolve, reject) => {
     var transaction = db.transaction([storeName], "readwrite");
     var store = transaction.objectStore(storeName);
@@ -29,8 +29,13 @@ function readtheDatafromIndexedDb(dbName, storeName, key, headers) {
       reject("unexpected error happened");
     }
     request.onsuccess = function (e) {
-      //JSON.parse(request.result)
-      resolve(new Response(request.result, { headers: headers }));
+      response = null;
+      if (storeName == "files") {
+        response = new Response(request.result, { 'content-type': 'image/png' })
+      } else {
+        response = new Response(JSON.parse(request.result))
+      }
+      resolve(response);
     }
   })
 }
@@ -106,7 +111,18 @@ app.get("/files/*", (req, res) => {
       db,
       "files",
       path,
-      { 'content-type': 'image/png' }
+    )
+      .then(response => { return response; })
+  )
+});
+
+app.get("/data/*", (req, res) => {
+  let path = getDBPathFromUrl(req.url);
+  res.send(
+    readtheDatafromIndexedDb(
+      db,
+      "data",
+      path,
     )
       .then(response => { return response; })
   )
@@ -122,12 +138,27 @@ app.post("/files/*", (req, res) => {
           const store = tx.objectStore("files");
           let request = store.put(data, path);
           request.onsuccess = successEvent => {
-            resolve(new Response(request.result, { 'content-type': 'image/png' }));
+            resolve(new Response({path: path}));
           }
         })
     })
   );
 });
+
+app.post("/addNewPicId", (req, res) => {
+  let path = getDBPathFromUrl(req.url);
+  let picId = req.body.picId
+  let transaction = db.transaction(["data"], "readwrite");
+  let store = transaction.objectStore("data");
+  let request = store.get("/withoutWatermark");
+  request.onsuccess = successEvent => {
+    store.put(request.result.push(picId), path);
+  }
+  request.onerror = ErrorEvent => {
+    store.put([picId], path)
+  }
+});
+
 
 
 class ResponseWrapper {
