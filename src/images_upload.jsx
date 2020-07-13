@@ -10,7 +10,7 @@ class ImagesUpload extends React.Component {
   render() {
     return (
       <div>
-        <div>Upload your images</div>
+        <h2>Upload your images</h2>
         <input type="file" multiple onChange={this.props.handleUploadNonWatermarkedPictures}/>
         
       </div>
