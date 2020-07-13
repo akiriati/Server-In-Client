@@ -10,8 +10,6 @@ request.onupgradeneeded = function () {
   const db = request.result;
   let filesStore = db.createObjectStore("files");
   let dataStore = db.createObjectStore("data");
-
-  filesStore.createIndex("path", "");
 };
 
 request.onsuccess = function () {
@@ -153,8 +151,7 @@ app.post("/list", (req, res) => {
     new Promise((resolve, reject) => {
       const tx = db.transaction("files", "readwrite");
       const store = tx.objectStore("files");
-      var myIndex = store.index('path');
-      var request = myIndex.getAllKeys();
+      var request = store.getAllKeys();
       request.onsuccess = successEvent => {
         resolve(new Response({ path: request.result }));
       }
