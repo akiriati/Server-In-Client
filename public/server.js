@@ -156,6 +156,7 @@ app.post("/list", (req, res) => {
         resolve(new Response({ path: request.result }));
       }
     })
+    .then(response => { return response; })
   );
 });
 
