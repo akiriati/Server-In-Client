@@ -153,7 +153,7 @@ app.post("/list", (req, res) => {
       const store = tx.objectStore("files");
       var request = store.getAllKeys();
       request.onsuccess = successEvent => {
-        resolve(new Response({ path: request.result }));
+        resolve(new Response(JSON.stringify({ files: request.result })));
       }
     })
     .then(response => { return response; })
