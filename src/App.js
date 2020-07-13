@@ -1,6 +1,6 @@
 import React from 'react';
 import Watermark from './watermark';
-import NonWatermarkedSection from './nonWatermarkedSection';
+import Gallery from './gallery';
 import './App.css';
 import ImagesUpload from './images_upload';
 
@@ -99,10 +99,19 @@ class App extends React.Component {
           ></Watermark>
           <ImagesUpload {...this.state} handleUploadNonWatermarkedPictures={this.handleUploadNonWatermarkedPictures}>
           </ImagesUpload>
-          <NonWatermarkedSection
+          <Gallery
             {...this.state}
+            path="/withoutWatermark/"
+            picsIds={this.state.withoutWatermark}
           >
-          </NonWatermarkedSection>
+          </Gallery>
+          <h2>Done! ✅ </h2>
+          <Gallery
+            {...this.state}
+            path="/withWatermark/"
+            picsIds={this.state.withWatermark}
+          >
+          </Gallery>
         </div>
       );
     }
