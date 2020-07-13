@@ -21,9 +21,9 @@ request.onerror = event => {
   console.log(event.error)
 };
 
-function readtheDatafromIndexedDb(dbName, storeName, key) {
+function readtheDatafromIndexedDb(storeName, key) {
   return new Promise((resolve, reject) => {
-    var transaction = db.transaction([storeName], "readwrite");
+    var transaction = db.transaction(storeName, "readwrite");
     var store = transaction.objectStore(storeName);
     var request = store.get(key);
     request.onerror = function () {
@@ -32,31 +32,11 @@ function readtheDatafromIndexedDb(dbName, storeName, key) {
     request.onsuccess = function (e) {
       response = null;
       if (storeName == "files") {
-        if (request.result){
-            var transaction2 = db.transaction([storeName], "readwrite");
-            var store2 = transaction2.objectStore(storeName);
-            var request2 = store2.get("/watermark.png");
-            request2.onsuccess = function(e){
-              
-              image_script(request2.result, request.result).then(imageUri=> fetch(imageUri)).then(res => res.blob()).then(blob =>
-                {
-                  if (key == "/watermark.png"){
-                    resolve(new Response(request.result,  { 'content-type': 'image/png' }));
-                  }
-                  else{
-                    resolve(new Response(blob,  { 'content-type': 'image/png' }));
-                  }
-                  
-                });
-            }
-        }else{
-          response = new Response(request.result, { 'content-type': 'image/png' })
-          resolve(response);
-        }
+        response = new Response(request.result, { 'content-type': 'image/png' })
       } else {
         response = new Response(JSON.parse(request.result))
       }
-      // resolve(response);
+      resolve(response);
     }
   })
 }
@@ -129,7 +109,6 @@ app.get("/files/*", (req, res) => {
   let path = getDBPathFromUrl(req.url);
   res.send(
     readtheDatafromIndexedDb(
-      db,
       "files",
       path,
     )
@@ -141,7 +120,6 @@ app.get("/data/*", (req, res) => {
   let path = getDBPathFromUrl(req.url);
   res.send(
     readtheDatafromIndexedDb(
-      db,
       "data",
       path,
     )
@@ -159,6 +137,7 @@ app.post("/files/*", (req, res) => {
           const store = tx.objectStore("files");
           let request = store.put(data, path);
           request.onsuccess = successEvent => {
+            setTimeout(OnFileWrite, 1000, path);
             resolve(new Response({ path: path }));
           }
         })
@@ -180,6 +159,30 @@ app.post("/list", (req, res) => {
     .then(response => { return response; })
   );
 });
+
+function OnFileWrite(path) {
+  if (path.startsWith("/withoutWatermark/")) {
+    let fileName = path.replace("/withoutWatermark/", "") 
+    let transaction = db.transaction("files", "readwrite");
+    let store = transaction.objectStore("files");
+    let request_watermark = store.get("/watermark.png");
+    request_watermark.onsuccess = successEvent => {
+      let request_file = store.get("/withoutWatermark/" + fileName);
+      request_file.onsuccess = successEvent => {           
+        image_script(request_watermark.result, request_file.result).then(imageUri=> fetch(imageUri)).then(res => res.blob()).then(blob => {
+          let transaction2 = db.transaction("files", "readwrite");
+          let store = transaction2.objectStore("files");
+          request_save = store.put(blob, "/withWatermark/" + fileName);
+          request_save.onsuccess = successEvent => {   
+            request_delete = store.delete("/withoutWatermark/" + fileName);
+            request_delete.onsuccess = successEvent => {
+            }
+          }
+        });
+      }
+    }
+  }
+}
 
 
 class ResponseWrapper {
