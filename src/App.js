@@ -9,7 +9,7 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      watermark: null,
+      watermark: [],
       withoutWatermark: [],
       withWatermark: [],
     }
@@ -25,14 +25,13 @@ class App extends React.Component {
       }
     }).then(
       this.setState({
-        watermark: window.URL.createObjectURL(event.target.files[0])
+        watermark: [window.URL.createObjectURL(event.target.files[0])]
       })
     )
   }
 
   handleUploadNonWatermarkedPictures = (event) => {
     for (let file of Array.from(event.target.files)) {
-      let picId = this.uuidv4()
       fetch("/files/withoutWatermark/" + file.name, {
         method: 'POST',
         body: file,
@@ -56,12 +55,12 @@ class App extends React.Component {
     
 
     convertDataToStateAndSetState = (data) => {
-      let watermarkPath = ""
+      let watermarkPaths = []
       const withtoutWatermarkPaths = []
       const withWatermarkPaths = []
       for (let filePath of data.files){
         if (filePath.startsWith("/watermark")) {
-          watermarkPath = filePath;
+          watermarkPaths.push(filePath);
         }
         else if(filePath.startsWith("/withoutWatermark")){
           withtoutWatermarkPaths.push(filePath)
@@ -73,7 +72,7 @@ class App extends React.Component {
         }
       }
       return this.setState({
-        watermark:watermarkPath,
+        watermark:watermarkPaths,
         withWatermark:withWatermarkPaths,
         withoutWatermark: withtoutWatermarkPaths
       })
@@ -93,10 +92,13 @@ class App extends React.Component {
     render() {
       return (
         <div>
-          <Watermark
+          <h2>Watermark</h2>
+          <input type="file" onChange={this.handleWatermarkChanged}/>
+          <Gallery
             {...this.state}
-            handleWatermarkChanged={this.handleWatermarkChanged}
-          ></Watermark>
+            path="/watermark/"
+            picsIds={this.state.watermark}
+          ></Gallery>
           <ImagesUpload {...this.state} handleUploadNonWatermarkedPictures={this.handleUploadNonWatermarkedPictures}>
           </ImagesUpload>
           <Gallery
