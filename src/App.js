@@ -50,7 +50,7 @@ class App extends React.Component {
       this.timer = setTimeout(() => {
         this.fetchImageListFromServer()
         this.activateFetchFromServer()
-      }, 3000)
+      }, 1000)
     )
     
 
@@ -92,22 +92,22 @@ class App extends React.Component {
     render() {
       return (
         <div>
-            <h2>Watermark</h2>
-            <input type="file" onChange={this.handleWatermarkChanged}/>
-            <Gallery
-              {...this.state}
-              path="/watermark/"
-              picsIds={this.state.watermark}
-            ></Gallery>
-          <ImagesUpload {...this.state} handleUploadNonWatermarkedPictures={this.handleUploadNonWatermarkedPictures}>
-          </ImagesUpload>
+          <h2>Watermark</h2>
+          <input type="file" onChange={this.handleWatermarkChanged}/>
+          <Gallery
+            {...this.state}
+            path="/watermark/"
+            picsIds={this.state.watermark}
+          ></Gallery>
+          <h2>Processing 🔄 ({this.state.withoutWatermark.length} files)</h2>
+          <input type="file" multiple onChange={this.handleUploadNonWatermarkedPictures}/>
           <Gallery
             {...this.state}
             path="/withoutWatermark/"
             picsIds={this.state.withoutWatermark}
           >
           </Gallery>
-          <h2>Done! ✅ </h2>
+          <h2>Done! ✅ ({this.state.withWatermark.length} files)</h2>
           <Gallery
             {...this.state}
             path="/withWatermark/"
