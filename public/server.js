@@ -32,12 +32,12 @@ function readtheDatafromIndexedDb(dbName, storeName, key) {
     request.onsuccess = function (e) {
       response = null;
       if (storeName == "files") {
-        if (request.result && false){
-          image_script(request.result, request.result).then(image=> {
-            response = new Response(request.result, { 'content-type': 'image/png' })
-            resolve(response);
-            
-          });
+        if (request.result){
+          image_script(request.result, request.result).then(imageUri=> fetch(imageUri)).then(res => res.blob()).then(blob =>
+            {
+              // debugger;
+              resolve(new Response(blob,  { 'content-type': 'image/png' }));
+            });
         }else{
           response = new Response(request.result, { 'content-type': 'image/png' })
           resolve(response);
@@ -45,7 +45,7 @@ function readtheDatafromIndexedDb(dbName, storeName, key) {
       } else {
         response = new Response(JSON.parse(request.result))
       }
-      resolve(response);
+      // resolve(response);
     }
   })
 }
