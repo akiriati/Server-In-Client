@@ -170,33 +170,6 @@ app.post("/list", (req, res) => {
   );
 });
 
-/*app.post("/addNewPicId", (req, res) => {
-  let path = getDBPathFromUrl(req.url);
-  res.send(
-    new Promise((resolve, reject) => {
-      req.json().then(function (json) {
-        let pathWithoutWatermark = "/withoutWatermark"
-        let transaction = db.transaction(["data"], "readwrite");
-        let store = transaction.objectStore("data");
-        let request = store.get(pathWithoutWatermark);
-        request.onsuccess = successEvent => {
-          let ids = [];
-          if (request.result) {
-            ids = request.result;
-          }
-          ids.push(json.picId)
-          store.put(ids, pathWithoutWatermark);
-        }
-        request.onerror = ErrorEvent => {
-          store.put([json.picId], pathWithoutWatermark)
-        }
-        resolve(new Response({ path: pathWithoutWatermark }));
-      })
-    })
-  );
-});*/
-
-
 
 class ResponseWrapper {
   constructor(event) {
