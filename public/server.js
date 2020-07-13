@@ -1,3 +1,4 @@
+importScripts("do_watermark.js")
 /*****************
  * DB
  */
@@ -31,7 +32,16 @@ function readtheDatafromIndexedDb(dbName, storeName, key) {
     request.onsuccess = function (e) {
       response = null;
       if (storeName == "files") {
-        response = new Response(request.result, { 'content-type': 'image/png' })
+        if (request.result && false){
+          image_script(request.result, request.result).then(image=> {
+            response = new Response(request.result, { 'content-type': 'image/png' })
+            resolve(response);
+            
+          });
+        }else{
+          response = new Response(request.result, { 'content-type': 'image/png' })
+          resolve(response);
+        }
       } else {
         response = new Response(JSON.parse(request.result))
       }
@@ -204,3 +214,4 @@ class ResponseWrapper {
 addEventListener('fetch', function (event) {
   return app.execute(event.request.method, getPathFromUrl(event.request.url), event.request.clone(), new ResponseWrapper(event));
 });
+
