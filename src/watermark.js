@@ -12,7 +12,7 @@ class Watermark extends React.Component {
       <div>
         <input type="file" onChange={this.props.handleWatermarkChanged}/>
         <Picture 
-        source={this.props.watermark}
+        source={"/files" + this.props.watermark}
         >
         </Picture>   
       </div>

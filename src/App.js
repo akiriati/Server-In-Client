@@ -12,7 +12,6 @@ class App extends React.Component {
       watermark: null,
       withoutWatermark: [],
       withWatermark: [],
-      inProgress:[],      
     }
     let timer = null;
   }
@@ -34,20 +33,12 @@ class App extends React.Component {
   handleUploadNonWatermarkedPictures = (event) => {
     for (let file of Array.from(event.target.files)) {
       let picId = this.uuidv4()
-      fetch("/files/withoutWatermaerk/" + picId + ".png", {
+      fetch("/files/withoutWatermark/" + picId + ".png", {
         method: 'POST',
         body: file,
         headers: {
           'content-type': 'image/png'
         }
-      }).then(response => {
-        fetch("/list", {
-          method: 'POST',
-          body: JSON.stringify({ path: "/" }),
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        })
       })
     }
   }
@@ -61,42 +52,50 @@ class App extends React.Component {
 
 
     componentDidMount = () => {
-      fetch("files/watermark.png")
-        .then(response => response.blob())
-        .then(blob =>{
-          return this.setState({
-            watermark: window.URL.createObjectURL(new File([blob], "name"))
-          })
-        }
-      )
-      // this.activateFetchFromServer()
+      this.activateFetchFromServer()
     }
 
     activateFetchFromServer = () => (
       this.timer = setTimeout(() => {
-        this.fetchFromServer()
+        this.fetchImageListFromServer()
         this.activateFetchFromServer()
       }, 1000)
     )
     
-    fillMockedData = ()=> {
 
+    convertDataToStateAndSetState = (data) => {
+      let watermarkPath = ""
+      const withtoutWatermarkPaths = []
+      const withWatermarkPaths = []
+      for (let filePath of data.files){
+        if (filePath.startsWith("/watermark")) {
+          watermarkPath = filePath;
+        }
+        else if(filePath.startsWith("/withoutWatermark")){
+          withtoutWatermarkPaths.push(filePath)
+        }
+        else if (filePath.startsWith("/withWatermark")){
+          withWatermarkPaths.push(filePath)
+        }else{
+          console.error("unkown filepath " + filePath)
+        }
+      }
+      return this.setState({
+        watermark:watermarkPath,
+        withWatermark:withWatermarkPaths,
+        withoutWatermark: withtoutWatermarkPaths
+      })
+      
     }
 
-    fetchFromServer = () => {
-      fetch("/data/with_watermark").then(
-        response => response.json()
-      ).then(withWatermark =>  this.setState({
-        withWatermark:withWatermark
-      })
-      )
-      fetch("/data/without_watermark").then(response => response.json()).then(withoutWatermark =>
-        this.setState({withoutWatermark:withoutWatermark})
-      )
-
-      fetch("/data/in_progress").then(response => response.json()).then(inProgress =>
-        this.setState({inProgress:inProgress})
-      )
+    fetchImageListFromServer = () => {
+      fetch("/list", {
+        method: 'POST',
+        body: JSON.stringify({ path: "/" }),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      }).then(respons=> respons.json()).then(this.convertDataToStateAndSetState) 
     }
 
     render() {
