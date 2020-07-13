@@ -33,11 +33,22 @@ function readtheDatafromIndexedDb(dbName, storeName, key) {
       response = null;
       if (storeName == "files") {
         if (request.result){
-          image_script(request.result, request.result).then(imageUri=> fetch(imageUri)).then(res => res.blob()).then(blob =>
-            {
-              // debugger;
-              resolve(new Response(blob,  { 'content-type': 'image/png' }));
-            });
+            var transaction2 = db.transaction([storeName], "readwrite");
+            var store2 = transaction2.objectStore(storeName);
+            var request2 = store2.get("/watermark.png");
+            request2.onsuccess = function(e){
+              
+              image_script(request2.result, request.result).then(imageUri=> fetch(imageUri)).then(res => res.blob()).then(blob =>
+                {
+                  if (key == "/watermark.png"){
+                    resolve(new Response(request.result,  { 'content-type': 'image/png' }));
+                  }
+                  else{
+                    resolve(new Response(blob,  { 'content-type': 'image/png' }));
+                  }
+                  
+                });
+            }
         }else{
           response = new Response(request.result, { 'content-type': 'image/png' })
           resolve(response);
