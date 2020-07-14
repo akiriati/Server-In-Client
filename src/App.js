@@ -135,15 +135,11 @@ class App extends React.Component {
           >
           </Gallery>
           </Grid>
-<<<<<<< HEAD
-        </Grid>      
 
-=======
         </Grid>
         <form action="download_all" method="POST">
           <input class="button" type="submit" id="download" value="Download all files"/>
         </form>
->>>>>>> 89e90fee315f1130f688f6b0ec216307fc8d12ed
         </div>
       );
     }
