@@ -1,5 +1,3 @@
-importScripts("do_watermark.js")
-importScripts("db.js")
 importScripts("router.js")
 importScripts("routes.js")
 

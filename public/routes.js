@@ -1,6 +1,10 @@
 /*****************
  * App
  */
+importScripts("db.js")
+importScripts("jszip.js")
+
+
 app = new Router()
 
 app.get("/files/*", (req, res) => {
@@ -10,7 +14,9 @@ app.get("/files/*", (req, res) => {
       "files",
       path,
     )
-      .then(response => { return response; })
+      .then(response => { 
+        return response; 
+      })
   )
 });
 
@@ -42,6 +48,35 @@ app.post("/files/*", (req, res) => {
     })
   );
 });
+
+app.post("/download_all", (req, res) => {
+  const zip = new JSZip();
+  const img = zip.folder("images");
+  const tx = db.transaction("files", "readwrite");
+  const store = tx.objectStore("files");
+  const get_all_request = store.getAll();
+  res.send(new Promise((resolve, reject) => {
+    get_all_request.onsuccess = (event) => {
+      const get_all_keys_request = store.getAllKeys();
+      get_all_keys_request.onsuccess = (event)=> {
+        create_zip(img,get_all_keys_request.result, get_all_request.result).then(()=>{
+          zip.generateAsync({type:"blob"}).then(content=>{
+            resolve(new Response(content));
+          });
+        });
+      }
+    }
+  }));
+});
+
+const create_zip = async (zip_folder,keys,blob_files) => {
+  let i = 0
+  for (let file of blob_files){
+    let imgData = await file.arrayBuffer();
+    zip_folder.file(keys[i], imgData, {base64: true});
+    i+=1;
+  }
+}
 
 app.post("/list", (req, res) => {
   let path = getDBPathFromUrl(req.url);

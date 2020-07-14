@@ -128,6 +128,9 @@ class App extends React.Component {
           </Gallery>
           </Grid>
         </Grid>
+        <form action="download_all" method="POST">
+          <input class="button" type="submit" id="download" value="Download all files"/>
+        </form>
         </div>
       );
     }

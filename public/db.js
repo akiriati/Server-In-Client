@@ -1,3 +1,5 @@
+importScripts("do_watermark.js")
+
 const request = indexedDB.open("myApp", 3);
 let db;
 
