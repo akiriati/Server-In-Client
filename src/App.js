@@ -42,63 +42,63 @@ class App extends React.Component {
     }
   }
 
-    componentDidMount = () => {
+  componentDidMount = () => {
+    this.activateFetchFromServer()
+  }
+
+  activateFetchFromServer = () => (
+    this.timer = setTimeout(() => {
+      this.fetchImageListFromServer()
       this.activateFetchFromServer()
-    }
+    }, 1000)
+  )
 
-    activateFetchFromServer = () => (
-      this.timer = setTimeout(() => {
-        this.fetchImageListFromServer()
-        this.activateFetchFromServer()
-      }, 1000)
-    )
-    
 
-    convertDataToStateAndSetState = (data) => {
-      let watermarkPaths = []
-      const withtoutWatermarkPaths = []
-      const withWatermarkPaths = []
-      for (let filePath of data.files){
-        if (filePath.startsWith("/watermark")) {
-          watermarkPaths.push(filePath);
-        }
-        else if(filePath.startsWith("/withoutWatermark")){
-          withtoutWatermarkPaths.push(filePath)
-        }
-        else if (filePath.startsWith("/withWatermark")){
-          withWatermarkPaths.push(filePath)
-        }else{
-          console.error("unkown filepath " + filePath)
-        }
+  convertDataToStateAndSetState = (data) => {
+    let watermarkPaths = []
+    const withtoutWatermarkPaths = []
+    const withWatermarkPaths = []
+    for (let filePath of data.files) {
+      if (filePath.startsWith("/watermark")) {
+        watermarkPaths.push(filePath);
       }
-      return this.setState({
-        watermark:watermarkPaths,
-        withWatermark:withWatermarkPaths,
-        withoutWatermark: withtoutWatermarkPaths
-      })
-      
+      else if (filePath.startsWith("/withoutWatermark")) {
+        withtoutWatermarkPaths.push(filePath)
+      }
+      else if (filePath.startsWith("/withWatermark")) {
+        withWatermarkPaths.push(filePath)
+      } else {
+        console.error("unkown filepath " + filePath)
+      }
     }
+    return this.setState({
+      watermark: watermarkPaths,
+      withWatermark: withWatermarkPaths,
+      withoutWatermark: withtoutWatermarkPaths
+    })
 
-    fetchImageListFromServer = () => {
-      fetch("/list", {
-        method: 'POST',
-        body: JSON.stringify({ path: "/" }),
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      }).then(respons=> respons.json()).then(this.convertDataToStateAndSetState) 
-    }
+  }
 
-    handleDeleteFile = (path) => {
-      fetch(path, {method: 'DELETE'}).then(this.fetchImageListFromServer())
-    }
+  fetchImageListFromServer = () => {
+    fetch("/list", {
+      method: 'POST',
+      body: JSON.stringify({ path: "/" }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    }).then(respons => respons.json()).then(this.convertDataToStateAndSetState)
+  }
 
-    render() {
-      return (
-        <div style={{ padding: 100 }}>
+  handleDeleteFile = (path) => {
+    fetch(path, { method: 'DELETE' }).then(this.fetchImageListFromServer())
+  }
+
+  render() {
+    return (
+      <div style={{ padding: 100 }}>
         <Grid container spacing={4}>
-          <Grid container item xs={4} direction="column"> 
-            <h2>Watermark</h2>      
+          <Grid container item xs={4} direction="column">
+            <h2>Watermark</h2>
             <Gallery
               {...this.state}
               path="/watermark/"
@@ -107,53 +107,55 @@ class App extends React.Component {
             ></Gallery>
             <div className="upload-btn-wrapper">
               <button className="btn">Upload Watermark</button>
-              <input type="file" onChange={this.handleWatermarkChanged}/>       
+              <input type="file" onChange={this.handleWatermarkChanged} />
             </div>
-            
-          </Grid>
-          <Grid container item xs={4} direction="column"> 
-          <h2>Photos</h2>
-          <Gallery
-            {...this.state}
-            path="/withoutWatermark/"
-            picsIds={this.state.withoutWatermark}
-            handleDeleteFile={this.handleDeleteFile}
-          >
-          </Gallery>
-          <div className="upload-btn-wrapper">
-            <button className="btn">Upload Photos</button>
-            <input id="file-upload" type="file" multiple onChange={this.handleUploadNonWatermarkedPictures}/>          
-          </div>
-          </Grid>
-          <Grid container item xs={4} direction="column"> 
-          <h2>Ready to Download</h2>
-          <Gallery
-            {...this.state}
-            path="/withWatermark/"
-            picsIds={this.state.withWatermark}
-            handleDeleteFile={this.handleDeleteFile}
-          >
-          </Gallery>
-          </Grid>
 
+          </Grid>
+          <Grid container item xs={4} direction="column">
+            <h2>Photos</h2>
+            <Gallery
+              {...this.state}
+              path="/withoutWatermark/"
+              picsIds={this.state.withoutWatermark}
+              handleDeleteFile={this.handleDeleteFile}
+            >
+            </Gallery>
+            <div className="upload-btn-wrapper">
+              <button className="btn">Upload Photos</button>
+              <input id="file-upload" type="file" multiple onChange={this.handleUploadNonWatermarkedPictures} />
+            </div>
+          </Grid>
+          <Grid container item xs={4} direction="column">
+            <h2>Ready to Download</h2>
+            <Gallery
+              {...this.state}
+              path="/withWatermark/"
+              picsIds={this.state.withWatermark}
+              handleDeleteFile={this.handleDeleteFile}
+            >
+            </Gallery>
+            <form action="download_all" method="POST">
+              <div className="upload-btn-wrapper">
+                <input class="btn" type="submit" id="download" value="Download all files" />
+              </div>
+           </form>
+          </Grid>
         </Grid>
-        <form action="download_all" method="POST">
-          <input class="button" type="submit" id="download" value="Download all files"/>
-        </form>
-        </div>
-      );
-    }
+
+      </div>
+    );
   }
+}
 
-  /*
-          <Progress
-                {...this.state}
-                numWithWatermark={this.state.withWatermark.length}
-                number={(this.state.withWatermark.length*100)/(this.state.withWatermark.length+this.state.withoutWatermark.length)}
-                value={(this.state.withWatermark.length*100)/(this.state.withWatermark.length+this.state.withoutWatermark.length)}
-              >
-        </Progress>
-  */
+/*
+        <Progress
+              {...this.state}
+              numWithWatermark={this.state.withWatermark.length}
+              number={(this.state.withWatermark.length*100)/(this.state.withWatermark.length+this.state.withoutWatermark.length)}
+              value={(this.state.withWatermark.length*100)/(this.state.withWatermark.length+this.state.withoutWatermark.length)}
+            >
+      </Progress>
+*/
 
 
-  export default App;
+export default App;

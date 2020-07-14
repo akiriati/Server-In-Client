@@ -44,11 +44,6 @@
   cursor: pointer;
 }
 
-.btn:hover {
-  cursor: pointer;
-  background-color: gray;
-}
-
 .btn {
   border: 2px solid gray;
   color: gray;
@@ -57,7 +52,6 @@
   border-radius: 8px;
   font-size: 20px;
   font-weight: bold;
-  cursor: pointer;
 }
 
 .upload-btn-wrapper input[type=file] {
@@ -66,5 +60,4 @@
   left: 0;
   top: 0;
   opacity: 0;
-  cursor: pointer;
 }
