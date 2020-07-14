@@ -5,8 +5,8 @@ import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import HighlightOffButton from '@material-ui/icons/HighlightOff';
-
-
+import GetAppIcon from '@material-ui/icons/GetApp';
+import Link from '@material-ui/core/Link';
 
 const useStyles = theme => ({
   root: {
@@ -36,12 +36,13 @@ class Gallery extends React.Component {
 
   render() { 
     const { classes } = this.props;
+    const imagePath = (picId) => "/files" + picId
     return (
     <div className={classes.root}>
       <GridList className={classes.gridList} cols={Math.min(this.props.picsIds.length,7)}>
         {this.props.picsIds.map((picId) => (
           <GridListTile key={picId}>
-            <img src={"/files" + picId} alt={"/files" + picId}></img>
+            <img src={imagePath(picId)} alt={imagePath(picId)}></img>
             <GridListTileBar
               title={picId.replace(this.props.path, "")}
               classes={{
@@ -49,10 +50,19 @@ class Gallery extends React.Component {
                 title: classes.title,
               }}
               actionIcon={
-                <IconButton>
-                  <HighlightOffButton className={classes.title} />
-                </IconButton>
+                <div>
+                  <IconButton>
+                    <HighlightOffButton className={classes.title} />
+                  </IconButton>
+                  <IconButton>
+                  <Link href={imagePath(picId)} download={picId} target="_blank">
+                    <GetAppIcon className={classes.title} >                      
+                    </GetAppIcon>
+                  </Link>
+                  </IconButton>
+                </div>
               }
+              
             />
           </GridListTile>
         ))}
