@@ -94,9 +94,9 @@ class App extends React.Component {
 
     render() {
       return (
-        <div style={{ padding: 50 }}>
+        <div style={{ padding: 100 }}>
         <Grid container spacing={4}>
-          <Grid container item xs={4} > 
+          <Grid container item xs={4} direction="column"> 
             <h2>Watermark</h2>
             <input type="file" onChange={this.handleWatermarkChanged}/>
             <Gallery
@@ -106,7 +106,7 @@ class App extends React.Component {
               handleDeleteFile={this.handleDeleteFile}
             ></Gallery>
           </Grid>
-          <Grid container item xs={4} > 
+          <Grid container item xs={4} direction="column"> 
           <h2>Processing 🔄 ({this.state.withoutWatermark.length} files)</h2>
           <input type="file" multiple onChange={this.handleUploadNonWatermarkedPictures}/>
           <Gallery
@@ -117,7 +117,7 @@ class App extends React.Component {
           >
           </Gallery>
           </Grid>
-          <Grid container item xs={4} > 
+          <Grid container item xs={4} direction="column"> 
           <h2>Done! ✅ ({this.state.withWatermark.length} files)</h2>
           <Gallery
             {...this.state}
