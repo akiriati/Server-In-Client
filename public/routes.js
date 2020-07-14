@@ -59,7 +59,7 @@ app.post("/download_all", (req, res) => {
       const get_all_keys_request = store.getAllKeys();
       get_all_keys_request.onsuccess = (event)=> {
         create_zip(zip,get_all_keys_request.result, get_all_request.result).then(()=>{
-          zip.generateAsync({type:"blob"}).then(content=>{
+          zip.generateAsync({type:"uint8array"}).then(content=>{
             resolve(new Response(content));
           });
         });
