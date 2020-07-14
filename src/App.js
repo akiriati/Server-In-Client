@@ -1,5 +1,6 @@
 import React from 'react';
 import Gallery from './gallery';
+import Progress from './progress';
 import './App.css';
 import Grid from '@material-ui/core/Grid';
 
@@ -97,18 +98,21 @@ class App extends React.Component {
         <div style={{ padding: 100 }}>
         <Grid container spacing={4}>
           <Grid container item xs={4} direction="column"> 
-            <h2>Watermark</h2>
-            <input type="file" onChange={this.handleWatermarkChanged}/>
+            <h2>Watermark</h2>      
             <Gallery
               {...this.state}
               path="/watermark/"
               picsIds={this.state.watermark}
               handleDeleteFile={this.handleDeleteFile}
             ></Gallery>
+            <div class="upload-btn-wrapper">
+              <button class="btn">Upload Watermark</button>
+              <input type="file" onChange={this.handleWatermarkChanged}/>       
+            </div>
+            
           </Grid>
           <Grid container item xs={4} direction="column"> 
-          <h2>Processing 🔄 ({this.state.withoutWatermark.length} files)</h2>
-          <input type="file" multiple onChange={this.handleUploadNonWatermarkedPictures}/>
+          <h2>Photos</h2>
           <Gallery
             {...this.state}
             path="/withoutWatermark/"
@@ -116,9 +120,13 @@ class App extends React.Component {
             handleDeleteFile={this.handleDeleteFile}
           >
           </Gallery>
+          <div class="upload-btn-wrapper">
+            <button class="btn">Upload Photos</button>
+            <input id="file-upload" type="file" multiple onChange={this.handleUploadNonWatermarkedPictures}/>          
+          </div>
           </Grid>
           <Grid container item xs={4} direction="column"> 
-          <h2>Done! ✅ ({this.state.withWatermark.length} files)</h2>
+          <h2>Ready to Download</h2>
           <Gallery
             {...this.state}
             path="/withWatermark/"
@@ -127,12 +135,22 @@ class App extends React.Component {
           >
           </Gallery>
           </Grid>
-        </Grid>
+        </Grid>      
+
         </div>
       );
     }
   }
 
+  /*
+          <Progress
+                {...this.state}
+                numWithWatermark={this.state.withWatermark.length}
+                number={(this.state.withWatermark.length*100)/(this.state.withWatermark.length+this.state.withoutWatermark.length)}
+                value={(this.state.withWatermark.length*100)/(this.state.withWatermark.length+this.state.withoutWatermark.length)}
+              >
+        </Progress>
+  */
 
 
   export default App;

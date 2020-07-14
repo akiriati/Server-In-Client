@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
+import ListSubheader from '@material-ui/core/ListSubheader';
 import IconButton from '@material-ui/core/IconButton';
 import HighlightOffButton from '@material-ui/icons/HighlightOff';
 
@@ -31,6 +32,9 @@ export default function Gallery(props) {
     return (
         <div className={classes.root}>
             <GridList cellHeight={250} className={classes.gridList}>
+                <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
+                <ListSubheader component="div">{props.picsIds.length} Files</ListSubheader>
+                </GridListTile>
                 {props.picsIds.map((picId) => (
                     <GridListTile key={picId}>
                         <img src={imagePath(picId)} alt={picId} />
