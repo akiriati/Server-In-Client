@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 importScripts("hustle.js")
-=======
-importScripts("do_watermark.js")
->>>>>>> 89e90fee315f1130f688f6b0ec216307fc8d12ed
 
 const request = indexedDB.open("myApp", 3);
 let db;
