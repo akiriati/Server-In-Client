@@ -58,3 +58,17 @@ app.post("/list", (req, res) => {
   );
 });
 
+app.delete("/files/*", (req, res) => {
+    let path = getDBPathFromUrl(req.url);
+    res.send(
+      new Promise((resolve, reject) => {
+        const tx = db.transaction("files", "readwrite");
+        const store = tx.objectStore("files");
+        let request = store.delete(path);
+        request.onsuccess = successEvent => {
+            resolve(new Response({ path: path }));
+        }
+    })
+    .then(response => { return response; })
+    );
+});

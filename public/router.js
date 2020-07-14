@@ -29,6 +29,14 @@ class Router {
         fn
       )
     }
+
+    delete = (route, fn) => {
+        this.addHandler(
+          "DELETE",
+          route,
+          fn
+        )
+      }
   
     execute = (method, route, req, res) => {
       for (let handler of this.handlers) {

@@ -49,8 +49,8 @@ class Gallery extends React.Component {
                 title: classes.title,
               }}
               actionIcon={
-                <IconButton>
-                  <HighlightOffButton className={classes.title} />
+                <IconButton onClick={(e) => this.props.handleDeleteFile("/files" + picId)}>
+                  <HighlightOffButton className={classes.title}/>
                 </IconButton>
               }
             />
