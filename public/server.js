@@ -1,5 +1,3 @@
-importScripts("do_watermark.js")
-importScripts("db.js")
 importScripts("router.js")
 importScripts("routes.js")
 
@@ -20,3 +18,5 @@ addEventListener('fetch', function (event) {
   return app.execute(event.request.method, getPathFromUrl(event.request.url), event.request.clone(), new ResponseWrapper(event));
 });
 
+self.skipWaiting()
+console.log(" web service reloaded")
