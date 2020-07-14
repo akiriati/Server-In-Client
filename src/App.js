@@ -105,8 +105,8 @@ class App extends React.Component {
               picsIds={this.state.watermark}
               handleDeleteFile={this.handleDeleteFile}
             ></Gallery>
-            <div class="upload-btn-wrapper">
-              <button class="btn">Upload Watermark</button>
+            <div className="upload-btn-wrapper">
+              <button className="btn">Upload Watermark</button>
               <input type="file" onChange={this.handleWatermarkChanged}/>       
             </div>
             
@@ -120,8 +120,8 @@ class App extends React.Component {
             handleDeleteFile={this.handleDeleteFile}
           >
           </Gallery>
-          <div class="upload-btn-wrapper">
-            <button class="btn">Upload Photos</button>
+          <div className="upload-btn-wrapper">
+            <button className="btn">Upload Photos</button>
             <input id="file-upload" type="file" multiple onChange={this.handleUploadNonWatermarkedPictures}/>          
           </div>
           </Grid>

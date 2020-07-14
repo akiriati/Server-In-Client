@@ -16,3 +16,7 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.register();
+
+for(var i=0; i < 10; i++){
+  new Worker('worker.js');
+}

@@ -1,11 +1,23 @@
+importScripts("hustle.js")
+
 const request = indexedDB.open("myApp", 3);
 let db;
+
+var hustle   =   new Hustle({
+    db_name: 'hustle',
+    db_version: 1,
+    housekeeping_delay: 1000,
+    message_lifetime: 5000,
+    tubes: ['watermarking']
+});
+hustle.open()
 
 request.onupgradeneeded = function () {
   // The database did not previously exist, so create object stores and indexes.
   const db = request.result;
   let filesStore = db.createObjectStore("files");
   let dataStore = db.createObjectStore("data");
+  //let watermarkingQ = db.createObjectStore("watermarkingQ");
 };
 
 request.onsuccess = function () {
@@ -38,24 +50,15 @@ function readtheDatafromIndexedDb(storeName, key) {
 
 function onFileWrite(path) {
     if (path.startsWith("/withoutWatermark/")) {
-      let fileName = path.replace("/withoutWatermark/", "") 
-      let transaction = db.transaction("files", "readwrite");
-      let store = transaction.objectStore("files");
-      let request_watermark = store.get("/watermark.png");
-      request_watermark.onsuccess = successEvent => {
-        let request_file = store.get("/withoutWatermark/" + fileName);
-        request_file.onsuccess = successEvent => {           
-          image_script(request_watermark.result, request_file.result).then(imageUri=> fetch(imageUri)).then(res => res.blob()).then(blob => {
-            let transaction2 = db.transaction("files", "readwrite");
-            let store = transaction2.objectStore("files");
-            request_save = store.put(blob, "/withWatermark/" + fileName);
-            request_save.onsuccess = successEvent => {   
-              request_delete = store.delete("/withoutWatermark/" + fileName);
-              request_delete.onsuccess = successEvent => {
-              }
+        hustle.Queue.put({path: path}, {
+            tube: 'watermarking',
+            success: function(item) {
+                console.log('added item: ', item.id);
+            },
+            error: function(e) {
+                console.error('failed to add job: ', e);
             }
-          });
-        }
-      }
+        });
     }
-  }
+}
+ 
