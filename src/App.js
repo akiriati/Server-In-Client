@@ -1,8 +1,7 @@
 import React from 'react';
-import Watermark from './watermark';
 import Gallery from './gallery';
 import './App.css';
-import ImagesUpload from './images_upload';
+import Grid from '@material-ui/core/Grid';
 
 class App extends React.Component {
 
@@ -95,15 +94,19 @@ class App extends React.Component {
 
     render() {
       return (
-        <div>
-          <h2>Watermark</h2>
-          <input type="file" onChange={this.handleWatermarkChanged}/>
-          <Gallery
-            {...this.state}
-            path="/watermark/"
-            picsIds={this.state.watermark}
-            handleDeleteFile={this.handleDeleteFile}
-          ></Gallery>
+        <div style={{ padding: 50 }}>
+        <Grid container spacing={4}>
+          <Grid container item xs={4} > 
+            <h2>Watermark</h2>
+            <input type="file" onChange={this.handleWatermarkChanged}/>
+            <Gallery
+              {...this.state}
+              path="/watermark/"
+              picsIds={this.state.watermark}
+              handleDeleteFile={this.handleDeleteFile}
+            ></Gallery>
+          </Grid>
+          <Grid container item xs={4} > 
           <h2>Processing 🔄 ({this.state.withoutWatermark.length} files)</h2>
           <input type="file" multiple onChange={this.handleUploadNonWatermarkedPictures}/>
           <Gallery
@@ -113,6 +116,8 @@ class App extends React.Component {
             handleDeleteFile={this.handleDeleteFile}
           >
           </Gallery>
+          </Grid>
+          <Grid container item xs={4} > 
           <h2>Done! ✅ ({this.state.withWatermark.length} files)</h2>
           <Gallery
             {...this.state}
@@ -121,6 +126,8 @@ class App extends React.Component {
             handleDeleteFile={this.handleDeleteFile}
           >
           </Gallery>
+          </Grid>
+        </Grid>
         </div>
       );
     }
