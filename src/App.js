@@ -89,6 +89,10 @@ class App extends React.Component {
       }).then(respons=> respons.json()).then(this.convertDataToStateAndSetState) 
     }
 
+    handleDeleteFile = (path) => {
+      fetch(path, {method: 'DELETE'}).then(this.fetchImageListFromServer())
+    }
+
     render() {
       return (
         <div>
@@ -98,6 +102,7 @@ class App extends React.Component {
             {...this.state}
             path="/watermark/"
             picsIds={this.state.watermark}
+            handleDeleteFile={this.handleDeleteFile}
           ></Gallery>
           <h2>Processing 🔄 ({this.state.withoutWatermark.length} files)</h2>
           <input type="file" multiple onChange={this.handleUploadNonWatermarkedPictures}/>
@@ -105,6 +110,7 @@ class App extends React.Component {
             {...this.state}
             path="/withoutWatermark/"
             picsIds={this.state.withoutWatermark}
+            handleDeleteFile={this.handleDeleteFile}
           >
           </Gallery>
           <h2>Done! ✅ ({this.state.withWatermark.length} files)</h2>
@@ -112,6 +118,7 @@ class App extends React.Component {
             {...this.state}
             path="/withWatermark/"
             picsIds={this.state.withWatermark}
+            handleDeleteFile={this.handleDeleteFile}
           >
           </Gallery>
         </div>

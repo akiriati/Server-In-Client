@@ -51,7 +51,7 @@ class Gallery extends React.Component {
               }}
               actionIcon={
                 <div>
-                  <IconButton>
+                  <IconButton onClick={(e) => this.props.handleDeleteFile("/files" + picId)}>
                     <HighlightOffButton className={classes.title} />
                   </IconButton>
                   <IconButton>
@@ -61,8 +61,7 @@ class Gallery extends React.Component {
                   </Link>
                   </IconButton>
                 </div>
-              }
-              
+              }              
             />
           </GridListTile>
         ))}
