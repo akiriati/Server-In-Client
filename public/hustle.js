@@ -938,7 +938,12 @@ var Hustle = function(qoptions)
                     error: function(e) {
                         if(e instanceof HustleNotFound)
                         {
-                            move_items = move_items.splice(move_items.indexOf(item), 1);;
+                            const tx = db.transaction(tbl.reserved, "readwrite");
+                            const store = tx.objectStore(tbl.reserved);
+                            let request = store.delete(item.id);
+                            request.onsuccess = successEvent => {
+                                console.log("removed from reserved " + item.id)
+                            }            
                         }
                         console.error('Hustle: ttr move: ', e);
                     }

@@ -41,8 +41,7 @@ app.post("/files/*", (req, res) => {
           const store = tx.objectStore("files");
           let request = store.put(data, path);
           request.onsuccess = successEvent => {
-           // setTimeout(onFileWrite, 1000, path);
-           onFileWrite(path)
+           setTimeout(onFileWrite, 2000, path);
             resolve(new Response({ path: path }));
           }
         })
