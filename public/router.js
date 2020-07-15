@@ -44,6 +44,16 @@ class Router {
           return handler.fn(req, res)
         }
       }
+      res.send(
+        caches.match(req).then(match => {
+          return fetch(req).then(response => {
+            // Update cache.
+            return caches.open("1").then(cache => cache.put(req, response.clone())).then(()=>
+              response
+            )
+          }).catch(()=> match);
+      }));
+      
     }
   }
   
