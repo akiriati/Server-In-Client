@@ -95,7 +95,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <div style={{ padding: 100 }}>
+      <div style={{ padding: 30 }}>
         <Grid container spacing={4}>
           <Grid container item xs={4} direction="column">
             <h2>Watermark</h2>
