@@ -37,6 +37,9 @@ class Router {
           fn
         )
       }
+    clear_cache = ()=>{
+      
+    }
   
     execute = (method, route, req, res) => {
       for (let handler of this.handlers) {
