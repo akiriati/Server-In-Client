@@ -143,9 +143,8 @@ class App extends React.Component {
         </Grid>
         <Progress
               {...this.state}
-              numWithWatermark={this.state.withWatermark.length}
-              number={this.state.withoutWatermark.length==0?100:(this.state.withWatermark.length*100)/(this.state.withWatermark.length+this.state.withoutWatermark.length)}
-              value={this.state.withoutWatermark.length==0?100:(this.state.withWatermark.length*100)/(this.state.withWatermark.length+this.state.withoutWatermark.length)}
+              tasksDone={this.state.withWatermark.length}
+              tasksToDo={this.state.withoutWatermark.length}
             >
         </Progress>
 

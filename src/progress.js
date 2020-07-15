@@ -6,14 +6,20 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
 export default function LinearProgressWithLabel(props) {
+
+  if (props.tasksToDo == props.tasksDone || props.tasksToDo == 0)
+    return (<div></div>); 
+
+  const precantage = (props.tasksDone*100)/(props.tasksToDo + props.tasksDone)
+
   return (
     <Box display="flex" alignItems="center">
       <Box width="100%" mr={5}>
-        <LinearProgress variant="determinate" {...props} />
+        <LinearProgress variant="determinate" {...props} value={precantage} />
       </Box>
       <Box minWidth={35}>
         <Typography variant="body2" color="textSecondary">{`${Math.round(
-          props.value,
+          precantage
         )}%`}</Typography>
       </Box>
     </Box>
