@@ -17,8 +17,8 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.paper,
     },
     gridList: {
-        width: 500,
-        height: 600,
+        width: 400,
+        height: 400,
     },
     icon: {
         color: 'rgba(255, 255, 255, 0.54)',
@@ -31,12 +31,12 @@ export default function Gallery(props) {
 
     return (
         <div className={classes.root}>
-            <GridList cellHeight={250} className={classes.gridList}>
+            <GridList cellHeight={150} className={classes.gridList}>
                 <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
                 <ListSubheader component="div">{props.picsIds.length} Files</ListSubheader>
                 </GridListTile>
                 {props.picsIds.map((picId) => (
-                    <GridListTile key={picId}>
+                    <GridListTile  key={picId}>
                         <img src={imagePath(picId)} alt={picId} />
                         <GridListTileBar
                             title={picId.replace(props.path, "")}
