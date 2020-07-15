@@ -938,7 +938,7 @@ var Hustle = function(qoptions)
                     error: function(e) {
                         if(e instanceof HustleNotFound)
                         {
-                            move_items.erase(item);
+                            move_items = move_items.splice(move_items.indexOf(item), 1);;
                         }
                         console.error('Hustle: ttr move: ', e);
                     }

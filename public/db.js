@@ -7,7 +7,7 @@ var hustle   =   new Hustle({
     db_name: 'hustle',
     db_version: 1,
     housekeeping_delay: 1000,
-    message_lifetime: 5000,
+    message_lifetime: 1000,
     tubes: ['watermarking']
 });
 hustle.open()
@@ -52,6 +52,7 @@ function onFileWrite(path) {
     if (path.startsWith("/withoutWatermark/")) {
         hustle.Queue.put({path: path}, {
             tube: 'watermarking',
+            ttr: 2,
             success: function(item) {
                 console.log('added item: ', item.id);
             },

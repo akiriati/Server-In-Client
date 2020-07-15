@@ -1,7 +1,6 @@
 importScripts("jimp.js")
 
 let image_script = (logo_data_blob, image_data_blob) =>{
-  
     const LOGO_MARGIN_PERCENTAGE = 30;
    
     const main = async () => {

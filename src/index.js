@@ -17,6 +17,6 @@ ReactDOM.render(
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.register();
 
-for(var i=0; i < 10; i++){
+for(var i=0; i < 20; i++){
   new Worker('worker.js');
 }

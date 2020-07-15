@@ -9,6 +9,9 @@ handleTask = (task) => {
     request_watermark.onsuccess = successEvent => {
         let request_file = store.get(task.data.path);
         request_file.onsuccess = successEvent => {
+            if (!request_file.result || !request_watermark.result) {
+                return;
+            }
             image_script(request_watermark.result, request_file.result).then(imageUri => fetch(imageUri)).then(res => res.blob()).then(blob => {
                 let transaction2 = db.transaction("files", "readwrite");
                 let store = transaction2.objectStore("files");
@@ -23,7 +26,21 @@ handleTask = (task) => {
     }
 }
 
+/*
+dequeue = () => {
+    hustle.Queue.reserve({
+        tube: 'default',
+        success: function(item) { 
+            handleTask(item);
+            hustle.Queue.delete({
+        },
+    });
+}
+*/
+
 var consumer = new hustle.Queue.Consumer(handleTask, {
     tube: 'watermarking',
     delay: 100,
 });
+
+//dequeue();
