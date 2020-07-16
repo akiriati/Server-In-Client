@@ -68,3 +68,25 @@ var consumer = new hustle.Queue.Consumer(fn, {
 
 fn = () => {...}
 ```
+
+### Front end
+Front end code is fully decoupled from server implementation. `fetch` and resource fetching should be working natively.
+
+#### Fetch
+```javascript
+ handleDeleteFile = (path) => {
+      fetch(path, { method: 'DELETE' })
+        .then(this.fetchImageListFromServer())
+  }
+```
+#### Resources 
+```javascript
+<img src="/files/withoutWatermark/..." />
+```
+
+#### Caching
+Other resources that doesn't match any route, will be fetched from the server, and cached for future usage.
+ 
+
+
+
