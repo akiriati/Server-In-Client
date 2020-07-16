@@ -45,21 +45,21 @@ app.get("/data/*", (req, res) => {
 ### Background tasks
 The server is a single-threaded based with event loop. All handlers should use async calls for IO. However, if you still need to run long task you can do this by defining workers to handle tasks that are consumed from a queue
 
-####Start consumers 
+#### Start consumers 
 ````javascript 
 for(var i=0; i < 5; i++){
   new Worker('watermarkingWorker.js');
 }
 ````
 
-####Producer code example
+#### Producer code example
 ```javascript
 hustle.Queue.put({path: path}, {
             tube: 'watermarking',
             ttr: 3,
 });
 ```
-####Consumer code example
+#### Consumer code example
 ```javascript
 var consumer = new hustle.Queue.Consumer(fn, {
       tube: 'watermarking',
