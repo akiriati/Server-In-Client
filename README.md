@@ -81,6 +81,17 @@ caches.match(req).then(match => {
     )
   }).catch(()=> match);
 ```
+
+#### Deploy react-app to Github Pages
+1. Install GitHub Pages - `npm install gh-pages --save-dev`
+2. Add properties to `package.json` file - `"http://{username}.github.io/{repo-name}"` and  in the existing scripts property we to need to add predeploy and deploy.
+```
+"scripts": {
+"predeploy": "npm run build",
+"deploy": "gh-pages -d build"
+}
+```
+3.deploy - `npm run deploy`
  
 ### Front end
 Front end code is fully decoupled from server implementation. `fetch` and resource fetching should be working natively.
