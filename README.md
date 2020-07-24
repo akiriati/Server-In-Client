@@ -86,6 +86,14 @@ Front end code is fully decoupled from server implementation. `fetch` and resour
 
 #### Caching
 Other resources that doesn't match any route, will be fetched from the server, and cached for future usage.
+```javascript
+caches.match(req).then(match => {
+  return fetch(req).then(response => {
+    return caches.open("resources").then(cache => cache.put(req, response.clone())).then(()=>
+      response
+    )
+  }).catch(()=> match);
+  ```
  
 
 
