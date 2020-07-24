@@ -72,7 +72,7 @@ fn = () => {...}
 ### Serving
 
 #### Caching
-Other resources that doesn't match any route, will be fetched from the server, and cached for future usage.
+Other resources that don't match any route, will be fetched from the server, and cached for future usage.
 ```javascript
 caches.match(req).then(match => {
   return fetch(req).then(response => {
